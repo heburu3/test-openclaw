@@ -436,7 +436,7 @@ const Rests: React.FC<{ dur: number; top: number }> = ({ dur, top }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const op = useInOut(dur, 8, 8);
-  const lastAt = sec(14.64 - BEATS.rests[0]); // word "десять."
+  const lastAt = sec(BEATS.restsLast - BEATS.rests[0]);
   return (
     <AbsoluteFill style={{ alignItems: "center", top: 320 + top, opacity: op }}>
       <Label size={28}>привалы</Label>
@@ -591,7 +591,7 @@ const ticks = (from: number, to: number, n: number, vol: number, easeOut = false
   });
 
 const sfxCues = (variant: Variant): Cue[] => {
-  const restsLast = 14.64;
+  const restsLast = BEATS.restsLast;
   const cues: Cue[] = [
     { src: "sfx_pop.wav", at: BEATS.location[0], vol: 0.35 },
     ...ticks(BEATS.altitude[0] + 0.07, BEATS.altitude[0] + 0.85, 10, 0.22, true),

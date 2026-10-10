@@ -3,7 +3,22 @@
 
 export const FPS = 30;
 export const VO_OFFSET = 0.2;
-export const DURATION = 40;
+
+// Pauses removed from the voiceover by scripts/tighten_vo.py (VO seconds, on
+// vo_timed.wav). All hand-placed times below are authored against the untightened
+// voice and remapped through these cuts, so re-running the script only means
+// pasting its new output here.
+export const VO_CUTS: [number, number][] = [
+  [2.77, 3.05], [6.91, 6.97], [8.41, 8.59], [12.49, 12.55], [24.51, 24.61],
+  [26.91, 27.77], [30.47, 30.53], [33.33, 33.67], [35.28, 35.98],
+];
+const remapVO = (t: number) =>
+  t - VO_CUTS.reduce((acc, [a, b]) => acc + (t >= b ? b - a : t > a ? t - a : 0), 0);
+// Remap a video-time value authored against the untightened voice.
+const V = (t: number) => (t <= VO_OFFSET ? t : remapVO(t - VO_OFFSET) + VO_OFFSET);
+
+export const DURATION = Math.round(V(40) * FPS) / FPS;
+export const DURATION_FRAMES = Math.round(DURATION * FPS);
 
 // Word timings measured on vo_timed.wav (whisper.cpp, then hand-corrected to the
 // script text). Times are VO-relative; `phrases` below shifts them by VO_OFFSET.
@@ -44,9 +59,9 @@ export type Word = { t: number; text: string };
 export type Phrase = { start: number; end: number; words: Word[] };
 
 export const phrases: Phrase[] = RAW_PHRASES.map((p) => ({
-  start: p.words[0][0] + VO_OFFSET,
-  end: p.end + VO_OFFSET,
-  words: p.words.map(([t, text]) => ({ t: t + VO_OFFSET, text })),
+  start: remapVO(p.words[0][0]) + VO_OFFSET,
+  end: remapVO(p.end) + VO_OFFSET,
+  words: p.words.map(([t, text]) => ({ t: remapVO(t) + VO_OFFSET, text })),
 }));
 
 // Words that get a punch-in zoom in the dynamic variant.
@@ -64,7 +79,7 @@ export type Shot = {
   rate?: number;
 };
 
-export const shots: Shot[] = [
+const RAW_SHOTS: Shot[] = [
   { src: "climbA.mp4", from: 0, to: 1.6, srcStart: 4.0 },
   { src: "trail.mp4", from: 1.6, to: 4.3, srcStart: 0.4 },
   { src: "pano.mp4", from: 4.3, to: 5.8, srcStart: 0.5 },
@@ -80,11 +95,12 @@ export const shots: Shot[] = [
   { src: "summit.jpg", from: 27.6, to: 30.8 },
   { src: "summitpano.mp4", from: 30.8, to: 33.4, srcStart: 0.5 },
   { src: "peaks.mp4", from: 33.4, to: 36.3, srcStart: 0, rate: 0.85 },
-  { src: "pano.mp4", from: 36.3, to: DURATION, srcStart: 5.5 },
+  { src: "pano.mp4", from: 36.3, to: 40, srcStart: 5.5 },
 ];
+export const shots: Shot[] = RAW_SHOTS.map((sh) => ({ ...sh, from: V(sh.from), to: V(sh.to) }));
 
 // Infographic beats (video seconds).
-export const BEATS = {
+const RAW_BEATS = {
   location: [1.75, 4.25],
   altitude: [4.3, 5.8],
   progress: [5.8, 27.6], // route progress indicator visible
@@ -98,6 +114,11 @@ export const BEATS = {
   duration: [22.53, 24.8], // "Полтора часа" .. summit badge
   photo: 27.6,
   endCard: 37.3,
+  restsLast: 14.64, // word "десять." in "раз десять"
 };
+type Beats = { [K in keyof typeof RAW_BEATS]: (typeof RAW_BEATS)[K] extends number[] ? [number, number] : number };
+export const BEATS = Object.fromEntries(
+  Object.entries(RAW_BEATS).map(([k, v]) => [k, Array.isArray(v) ? v.map(V) : V(v)]),
+) as Beats;
 
 export const sec = (s: number) => Math.round(s * FPS);
