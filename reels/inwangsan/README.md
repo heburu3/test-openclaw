@@ -1,9 +1,10 @@
 # Reels: Инвансан (первая гора)
 
 Исходники монтажа Reels про подъём на Инвансан (Сеул, 338 м). Готовые ролики
-лежат в `renders/` (через Git LFS), исходные клипы и голос в репозиторий не кладутся.
+лежат в `renders/` (H.264, 18 Мбит/с), исходные клипы и голос в репозиторий не кладутся.
 
-Звук в роликах: только закадровый голос. Звук исходных клипов отключён.
+Звук в роликах: закадровый голос и синтезированные звуковые эффекты
+(`scripts/make_sfx.py`: свуш, поп, тик, динь, затвор). Звук исходных клипов отключён.
 
 Два варианта, обе композиции 1080×1920, 30 fps, 40 с:
 
@@ -21,8 +22,8 @@
 3. Подготовить клипы: `scripts/prep_clip.sh <исходник> <id> <стабилизация 0|1>`
    (id и отрезки см. в `remotion/timeline.ts`). Положить в
    `remotion-composer/public/inwangsan/`: клипы, `vo.wav` (голос), `summit.jpg`
-   (фото).
-4. Рендер: `npx remotion render src/index.tsx InwangsanMinimal out.mp4`, затем
+   (фото), а также `sfx_*.wav` из `python scripts/make_sfx.py <папка>`.
+4. Рендер: `npx remotion render src/index.tsx InwangsanMinimal out.mp4 --video-bitrate 18M`, затем
    нормализация звука: `ffmpeg -i out.mp4 -c:v copy -af loudnorm=I=-14:TP=-1.5 final.mp4`.
 
 ## Голос

@@ -578,6 +578,58 @@ const Beat: React.FC<{ from: number; to: number; children: (dur: number) => Reac
 };
 
 // ---------------------------------------------------------------------------
+// Sound effects (synthesized, see scripts/make_sfx.py)
+// ---------------------------------------------------------------------------
+
+type Cue = { src: string; at: number; vol: number };
+
+const ticks = (from: number, to: number, n: number, vol: number, easeOut = false): Cue[] =>
+  Array.from({ length: n }, (_, i) => {
+    const k = i / (n - 1);
+    const e = easeOut ? 1 - Math.pow(1 - k, 2.2) : k;
+    return { src: "sfx_tick.wav", at: from + (to - from) * e, vol };
+  });
+
+const sfxCues = (variant: Variant): Cue[] => {
+  const restsLast = 14.64;
+  const cues: Cue[] = [
+    { src: "sfx_pop.wav", at: BEATS.location[0], vol: 0.35 },
+    ...ticks(BEATS.altitude[0] + 0.07, BEATS.altitude[0] + 0.85, 10, 0.22, true),
+    ...ticks(BEATS.timer[0] + 0.15, BEATS.timer[1] - 0.8, 13, 0.16),
+    ...Array.from({ length: 10 }, (_, i) => ({
+      src: "sfx_pop.wav",
+      at: BEATS.rests[0] + (4 + (i * (sec(restsLast - BEATS.rests[0]) - 4)) / 9) / FPS,
+      vol: 0.18,
+    })),
+    { src: "sfx_pop.wav", at: BEATS.chipSafe, vol: 0.35 },
+    { src: "sfx_pop.wav", at: BEATS.chipFun, vol: 0.35 },
+    ...ticks(BEATS.duration[0] + 0.07, BEATS.duration[0] + 1.0, 9, 0.18, true),
+    { src: "sfx_ding.wav", at: BEATS.summit, vol: 0.32 },
+    { src: "sfx_shutter.wav", at: BEATS.photo - 0.03, vol: 0.7 },
+    { src: "sfx_whoosh.wav", at: BEATS.endCard - 0.15, vol: 0.28 },
+    { src: "sfx_ding.wav", at: BEATS.endCard + 0.25, vol: 0.32 },
+  ];
+  const whooshAt =
+    variant === "minimal"
+      ? [BEATS.altitude[0], BEATS.photo]
+      : shots.slice(1).map((sh) => sh.from);
+  for (const at of whooshAt) {
+    cues.push({ src: "sfx_whoosh.wav", at: at - 0.18, vol: variant === "minimal" ? 0.25 : 0.2 });
+  }
+  return cues;
+};
+
+const SoundEffects: React.FC<{ variant: Variant }> = ({ variant }) => (
+  <>
+    {sfxCues(variant).map((c, i) => (
+      <Sequence key={i} from={Math.max(0, sec(c.at))} durationInFrames={sec(1.5)}>
+        <Audio src={asset(c.src)} volume={c.vol} />
+      </Sequence>
+    ))}
+  </>
+);
+
+// ---------------------------------------------------------------------------
 // Composition
 // ---------------------------------------------------------------------------
 
@@ -607,6 +659,7 @@ export const InwangsanReel: React.FC<InwangsanReelProps> = ({ variant }) => {
       <Sequence from={sec(VO_OFFSET)}>
         <Audio src={asset("vo.wav")} />
       </Sequence>
+      <SoundEffects variant={variant} />
     </AbsoluteFill>
   );
 };
