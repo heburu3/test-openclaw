@@ -606,13 +606,11 @@ const sfxCues = (variant: Variant): Cue[] => {
     ...ticks(BEATS.duration[0] + 0.07, BEATS.duration[0] + 1.0, 9, 0.18, true),
     { src: "sfx_ding.wav", at: BEATS.summit, vol: 0.32 },
     { src: "sfx_shutter.wav", at: BEATS.photo - 0.03, vol: 0.7 },
-    { src: "sfx_whoosh.wav", at: BEATS.endCard - 0.15, vol: 0.28 },
     { src: "sfx_ding.wav", at: BEATS.endCard + 0.25, vol: 0.32 },
   ];
+  // Only a couple of accent whooshes: on every cut it gets cheesy.
   const whooshAt =
-    variant === "minimal"
-      ? [BEATS.altitude[0], BEATS.photo]
-      : shots.slice(1).map((sh) => sh.from);
+    variant === "minimal" ? [BEATS.altitude[0], BEATS.photo] : [shots[10].from, BEATS.photo];
   for (const at of whooshAt) {
     cues.push({ src: "sfx_whoosh.wav", at: at - 0.18, vol: variant === "minimal" ? 0.25 : 0.2 });
   }
