@@ -86,6 +86,7 @@ const ShotView: React.FC<{ shot: Shot; variant: Variant; first: boolean; dur: nu
           src={asset(shot.src)}
           trimBefore={sec(shot.srcStart ?? 0)}
           playbackRate={shot.rate ?? 1}
+          muted
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
       </AbsoluteFill>
@@ -605,9 +606,6 @@ export const InwangsanReel: React.FC<InwangsanReelProps> = ({ variant }) => {
 
       <Sequence from={sec(VO_OFFSET)}>
         <Audio src={asset("vo.wav")} />
-      </Sequence>
-      <Sequence from={sec(BEATS.photo) - 1} durationInFrames={15}>
-        <Audio src={asset("shutter.wav")} volume={0.8} />
       </Sequence>
     </AbsoluteFill>
   );
