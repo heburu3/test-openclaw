@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "chatplace": {
+      "type": "http",
+      "url": "https://mcp.chatplace.io/mcp"
+    }
+  }
+}
