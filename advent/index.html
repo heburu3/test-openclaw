@@ -1,0 +1,1081 @@
+<title>Декабрь Илоны</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;700&family=Caveat:wght@500;700&display=swap">
+<style>
+/* Layout: зимняя ночь за окном; сетка из 31 дверцы разного размера, вразнобой, как у настоящего календаря;
+   над ней — «копилка букв», из которой к 31-му складывается тайная фраза. Одна тёмная тема — осознанно. */
+:root {
+  --night: #0d1730;
+  --night-2: #15223f;
+  --night-3: #1e2f55;
+  --frost: #e7eef8;
+  --frost-dim: #a3b3cb;
+  --mandarin: #ff8b2d;
+  --mandarin-ink: #2a1300;
+  --gold: #eac36c;
+  --pine: #1c4a42;
+  --pine-2: #245a50;
+  --berry: #7b2437;
+  --berry-2: #93304a;
+  --ice: #cfe0f2;
+  --ice-ink: #13234a;
+  --card: #f1f5fb;
+  --card-2: #e2eaf5;
+  --card-ink: #14203a;
+  --card-dim: #55627c;
+  --good: #2f8a5b;
+  --bad: #c2384d;
+
+  --f-display: "Unbounded", "Arial Black", system-ui, sans-serif;
+  --f-body: "Manrope", "Segoe UI", system-ui, sans-serif;
+  --f-hand: "Caveat", "Comic Sans MS", cursive;
+
+  color-scheme: dark;
+}
+html { background: var(--night); }
+body {
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(255, 139, 45, .10), transparent 60%),
+    radial-gradient(900px 500px at 0% 0%, rgba(207, 224, 242, .08), transparent 60%),
+    var(--night);
+  color: var(--frost);
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+#snow { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+.wrap {
+  position: relative; z-index: 1;
+  max-width: 1080px; margin: 0 auto;
+  padding-block: 28px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 28px;
+}
+
+/* ——— шапка ——— */
+header.top { display: grid; gap: 10px; }
+.eyebrow {
+  font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--frost-dim); font-weight: 700;
+}
+h1 {
+  margin: 0; font-family: var(--f-display); font-weight: 900;
+  font-size: clamp(38px, 8vw, 76px); line-height: .95; letter-spacing: -.02em;
+  text-wrap: balance; user-select: none; cursor: default;
+}
+h1 .name { color: var(--mandarin); }
+.sub { font-family: var(--f-hand); font-size: clamp(22px, 3.4vw, 28px); color: var(--ice); line-height: 1.2; }
+.status { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.chip {
+  display: inline-flex; align-items: baseline; gap: 6px;
+  padding: 7px 12px; border-radius: 999px;
+  background: var(--night-2); border: 1px solid var(--night-3);
+  font-size: 14px; color: var(--frost-dim);
+}
+.chip b { color: var(--frost); font-variant-numeric: tabular-nums; font-weight: 700; }
+.chip.hot { border-color: var(--mandarin); color: var(--frost); }
+.chip.hot b { color: var(--mandarin); }
+.preview-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 8px 7px 12px; border-radius: 999px;
+  background: var(--gold); color: var(--mandarin-ink); font-size: 13px; font-weight: 700;
+}
+.preview-pill button {
+  border: 0; border-radius: 999px; padding: 3px 10px; font: inherit; font-size: 12px;
+  background: var(--mandarin-ink); color: var(--gold); cursor: pointer;
+}
+
+/* ——— копилка букв ——— */
+.board {
+  display: grid; gap: 12px;
+  padding: 18px; border-radius: 18px;
+  background: linear-gradient(180deg, var(--night-2), rgba(21, 34, 63, .6));
+  border: 1px solid var(--night-3);
+}
+.board-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 16px; }
+.board-head h2 { margin: 0; font-family: var(--f-display); font-weight: 700; font-size: 16px; letter-spacing: .02em; }
+.board-head p { margin: 0; color: var(--frost-dim); font-size: 14px; }
+.board-head p b { color: var(--gold); font-variant-numeric: tabular-nums; }
+.phrase { display: flex; flex-wrap: wrap; gap: 10px 18px; }
+.word { display: inline-flex; gap: 4px; }
+.slot {
+  width: 32px; height: 46px; border-radius: 7px;
+  display: grid; grid-template-rows: 1fr auto; place-items: center;
+  background: var(--night); border: 1px dashed #34497a;
+  padding-bottom: 3px;
+}
+.slot .l { font-family: var(--f-display); font-weight: 700; font-size: 17px; line-height: 1; color: #3c5288; padding-top: 7px; }
+.slot .n { font-size: 9px; line-height: 1; color: #5a6f9c; font-variant-numeric: tabular-nums; }
+.slot.got { background: rgba(234, 195, 108, .12); border: 1px solid var(--gold); }
+.slot.got .l { color: var(--gold); }
+.slot.got .n { color: var(--frost-dim); }
+.slot.fresh { animation: pop .9s cubic-bezier(.2, 1.6, .4, 1); }
+@keyframes pop { 0% { transform: scale(.4) rotate(-12deg); } 100% { transform: none; } }
+@media (max-width: 420px) {
+  .slot { width: 27px; height: 40px; }
+  .slot .l { font-size: 15px; padding-top: 6px; }
+  .phrase { gap: 8px 12px; }
+  .word { gap: 3px; }
+}
+
+/* ——— сетка дверец ——— */
+.grid {
+  display: grid; gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: minmax(84px, 1fr);
+  grid-auto-flow: dense;
+}
+@media (min-width: 620px) { .grid { grid-template-columns: repeat(5, 1fr); grid-auto-rows: 104px; gap: 12px; } }
+@media (min-width: 960px) { .grid { grid-template-columns: repeat(8, 1fr); grid-auto-rows: 112px; } }
+.door.wide { grid-column: span 2; }
+.door.tall { grid-row: span 2; }
+.door.big { grid-column: span 2; grid-row: span 2; }
+
+.door {
+  --face: var(--pine); --face-2: var(--pine-2); --num: var(--frost);
+  position: relative; perspective: 900px;
+  border: 0; padding: 0; margin: 0; background: none; cursor: pointer;
+  font: inherit; color: inherit; min-width: 0;
+  border-radius: 12px;
+}
+.door.v2 { --face: var(--berry); --face-2: var(--berry-2); }
+.door.v3 { --face: var(--night-3); --face-2: #27406f; }
+.door.v4 { --face: var(--ice); --face-2: #e3eefa; --num: var(--ice-ink); }
+.door:focus-visible { outline: 3px solid var(--mandarin); outline-offset: 3px; }
+
+.inside {
+  position: absolute; inset: 0; border-radius: 12px;
+  background: radial-gradient(circle at 50% 40%, #233766, #0a1226 75%);
+  box-shadow: inset 0 0 0 1px #2a3d6b, inset 0 6px 18px rgba(0, 0, 0, .55);
+  display: grid; place-items: center; align-content: center; gap: 2px;
+}
+.inside .il { font-family: var(--f-display); font-weight: 900; font-size: clamp(26px, 5vw, 40px); color: var(--gold); line-height: 1; }
+.inside .iq { font-family: var(--f-hand); font-size: 34px; color: var(--mandarin); line-height: 1; }
+.inside .id { font-size: 11px; color: var(--frost-dim); font-variant-numeric: tabular-nums; }
+
+.leaf {
+  position: absolute; inset: 0; border-radius: 12px;
+  transform-origin: 0 50%;
+  transition: transform .9s cubic-bezier(.3, .9, .3, 1), box-shadow .3s;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, .10), transparent 40%),
+    linear-gradient(160deg, var(--face-2), var(--face));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08), 0 6px 16px rgba(0, 0, 0, .35);
+  display: grid; padding: 10px 12px; overflow: hidden;
+}
+.leaf::after { /* рамка-филёнка */
+  content: ""; position: absolute; inset: 7px; border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, .14);
+}
+.door.v4 .leaf::after { border-color: rgba(19, 35, 74, .18); }
+.num {
+  font-family: var(--f-display); font-weight: 900; color: var(--num);
+  font-size: clamp(26px, 5.4vw, 40px); line-height: 1; letter-spacing: -.03em;
+  align-self: end; justify-self: start; position: relative;
+}
+.door.big .num { font-size: clamp(54px, 11vw, 92px); }
+.door.wide .num, .door.tall .num { font-size: clamp(32px, 6.4vw, 52px); }
+.knob {
+  position: absolute; right: 12px; top: 50%; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gold); box-shadow: 0 1px 2px rgba(0, 0, 0, .5);
+}
+.big-label {
+  position: absolute; top: 14px; left: 14px; right: 14px;
+  font-family: var(--f-hand); font-size: 24px; line-height: 1.05; color: var(--gold);
+}
+.lock { position: absolute; top: 11px; right: 11px; width: 14px; height: 14px; opacity: .55; color: var(--num); }
+
+.door.locked .leaf {
+  filter: saturate(.55) brightness(.78);
+  background:
+    repeating-linear-gradient(115deg, rgba(231, 238, 248, .06) 0 2px, transparent 2px 9px),
+    linear-gradient(135deg, rgba(255, 255, 255, .10), transparent 40%),
+    linear-gradient(160deg, var(--face-2), var(--face));
+}
+.door.today .leaf {
+  box-shadow: inset 0 0 0 2px var(--mandarin), 0 0 0 4px rgba(255, 139, 45, .22), 0 8px 26px rgba(255, 139, 45, .35);
+  animation: glow 2.4s ease-in-out infinite;
+}
+@keyframes glow { 50% { box-shadow: inset 0 0 0 2px var(--mandarin), 0 0 0 8px rgba(255, 139, 45, .10), 0 8px 30px rgba(255, 139, 45, .5); } }
+.door:not(.locked):not(.done):hover .leaf { transform: rotateY(-14deg); }
+.door.done .leaf { transform: rotateY(-72deg); box-shadow: 0 6px 16px rgba(0, 0, 0, .25); }
+.door.opening .leaf { transform: rotateY(-100deg); }
+.door.nope { animation: nope .45s; }
+@keyframes nope { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+
+/* ——— тост ——— */
+.toast {
+  position: fixed; left: 50%; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); z-index: 50;
+  transform: translate(-50%, 20px); opacity: 0; pointer-events: none;
+  max-width: min(420px, calc(100vw - 32px));
+  background: var(--card); color: var(--card-ink);
+  padding: 11px 16px; border-radius: 12px; font-size: 15px; font-weight: 500;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
+  transition: transform .3s, opacity .3s;
+}
+.toast.show { transform: translate(-50%, 0); opacity: 1; }
+
+/* ——— окно дня ——— */
+dialog.sheet {
+  width: min(540px, calc(100vw - 24px)); max-height: calc(100dvh - 32px);
+  border: 0; padding: 0; border-radius: 20px;
+  background: var(--card); color: var(--card-ink);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
+  overflow: auto;
+}
+dialog.sheet::backdrop { background: rgba(6, 11, 24, .72); backdrop-filter: blur(3px); }
+dialog.sheet[open] { animation: rise .35s cubic-bezier(.2, .9, .3, 1); }
+@keyframes rise { from { transform: translateY(24px) scale(.97); opacity: 0; } }
+.sheet-in { padding: 22px 22px 24px; display: grid; gap: 16px; }
+.sheet-top { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+.sheet .eyebrow { color: var(--card-dim); }
+.sheet h2 { margin: 4px 0 0; font-family: var(--f-display); font-weight: 700; font-size: 24px; line-height: 1.15; text-wrap: balance; }
+.sheet p { margin: 0; }
+.sheet .intro { color: #2b3956; max-width: 60ch; }
+.x {
+  flex: none; width: 36px; height: 36px; border-radius: 50%; border: 0; cursor: pointer;
+  background: var(--card-2); color: var(--card-ink); font-size: 20px; line-height: 1;
+}
+.x:focus-visible, .btn:focus-visible, .opt:focus-visible, .tile:focus-visible, .mcard:focus-visible, .globe:focus-visible { outline: 3px solid var(--mandarin); outline-offset: 2px; }
+
+.act { display: grid; gap: 12px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.btn {
+  border: 0; border-radius: 12px; padding: 12px 18px; cursor: pointer;
+  font: inherit; font-weight: 700; font-size: 15px;
+  background: var(--mandarin); color: var(--mandarin-ink);
+  transition: transform .15s, filter .15s;
+}
+.btn:hover { filter: brightness(1.05); }
+.btn:active { transform: scale(.97); }
+.btn.ghost { background: var(--card-2); color: var(--card-ink); }
+.btn[disabled] { opacity: .45; cursor: default; }
+input.field, textarea.field {
+  width: 100%; box-sizing: border-box;
+  font: inherit; font-size: 16px; color: var(--card-ink);
+  background: #fff; border: 2px solid var(--card-2); border-radius: 12px; padding: 11px 13px;
+}
+textarea.field { min-height: 120px; resize: vertical; }
+input.field:focus, textarea.field:focus { outline: none; border-color: var(--mandarin); }
+.shake { animation: nope .45s; }
+.hint { font-size: 14px; color: var(--card-dim); }
+.hint b { color: var(--card-ink); }
+.quote {
+  font-family: var(--f-hand); font-size: 26px; line-height: 1.2; color: var(--card-ink);
+  background: var(--card-2); border-radius: 14px; padding: 14px 16px;
+}
+.recipe { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+
+.opts { display: grid; gap: 8px; }
+.opt {
+  text-align: left; border: 2px solid var(--card-2); background: #fff; color: var(--card-ink);
+  border-radius: 12px; padding: 11px 14px; font: inherit; cursor: pointer;
+}
+.opt.wrong { border-color: var(--bad); color: var(--bad); text-decoration: line-through; cursor: default; }
+.opt.right { border-color: var(--good); background: #e5f4ec; }
+
+/* игры */
+.game { position: relative; border-radius: 14px; overflow: hidden; background: linear-gradient(180deg, #13234a, #0d1730); touch-action: none; }
+.game canvas { display: block; width: 100%; height: 300px; }
+.hud {
+  position: absolute; left: 10px; right: 10px; top: 10px; display: flex; justify-content: space-between;
+  font-family: var(--f-display); font-size: 13px; color: var(--frost); pointer-events: none; font-variant-numeric: tabular-nums;
+}
+.overlay {
+  position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 12px;
+  background: rgba(13, 23, 48, .72); color: var(--frost); text-align: center; padding: 16px;
+}
+.overlay p { max-width: 32ch; }
+
+.mem { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.mcard {
+  aspect-ratio: 3 / 4; max-width: 100%; border: 0; border-radius: 10px; cursor: pointer; font-size: 28px;
+  background: var(--night-3); color: transparent; position: relative;
+  transition: transform .3s, background .3s;
+}
+.mcard::before { content: "❄"; position: absolute; inset: 0; display: grid; place-items: center; color: #4d6aa6; font-size: 22px; }
+.mcard.up, .mcard.ok { background: #fff; color: inherit; box-shadow: inset 0 0 0 2px var(--card-2); }
+.mcard.up::before, .mcard.ok::before { content: none; }
+.mcard.ok { box-shadow: inset 0 0 0 2px var(--good); }
+
+.scratch { position: relative; border-radius: 14px; overflow: hidden; min-height: 150px; background: var(--card-2); touch-action: none; }
+.scratch .under { padding: 24px 20px; font-family: var(--f-hand); font-size: 28px; line-height: 1.15; display: grid; place-items: center; min-height: 150px; text-align: center; }
+.scratch canvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: crosshair; }
+
+.tiles { display: flex; flex-wrap: wrap; gap: 6px; }
+.tile {
+  width: 42px; height: 48px; border-radius: 10px; border: 0; cursor: pointer;
+  font-family: var(--f-display); font-weight: 700; font-size: 20px;
+  background: var(--night-3); color: var(--frost);
+}
+.tile.used { visibility: hidden; }
+.ans .tile { background: #fff; color: var(--card-ink); box-shadow: inset 0 0 0 2px var(--card-2); }
+.ans .tile.empty { background: transparent; box-shadow: inset 0 -3px 0 var(--card-2); cursor: default; }
+@media (max-width: 420px) { .tile { width: 34px; height: 42px; font-size: 17px; } }
+
+.globe-wrap { display: grid; place-items: center; padding: 8px 0; }
+.globe {
+  width: 160px; height: 160px; border-radius: 50%; border: 0; cursor: pointer; position: relative; overflow: hidden;
+  background: radial-gradient(circle at 35% 30%, #ffffff 0 6%, #cfe0f2 7%, #6d8ec4 55%, #22345a 100%);
+  box-shadow: inset 0 -10px 30px rgba(0, 0, 0, .35), 0 12px 30px rgba(20, 32, 58, .35);
+  font-family: var(--f-hand); font-size: 22px; color: var(--ice-ink);
+}
+.globe.shaking { animation: globe 1s; }
+@keyframes globe { 15% { transform: rotate(-14deg); } 30% { transform: rotate(12deg); } 45% { transform: rotate(-9deg); } 60% { transform: rotate(6deg); } 80% { transform: rotate(-2deg); } }
+
+.coupon {
+  border: 2px dashed var(--mandarin); border-radius: 16px; padding: 18px; display: grid; gap: 6px;
+  background: repeating-linear-gradient(-45deg, #fff 0 12px, #fff7ef 12px 24px);
+}
+.coupon .ct { font-family: var(--f-display); font-weight: 700; font-size: 20px; }
+.coupon .cc { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--card-dim); font-weight: 700; }
+
+/* награда */
+.reward {
+  display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; align-items: center;
+  border-radius: 16px; padding: 14px 16px; background: var(--night); color: var(--frost);
+}
+.reward .big { grid-row: span 2; width: 64px; height: 72px; border-radius: 12px; display: grid; place-items: center;
+  font-family: var(--f-display); font-weight: 900; font-size: 36px; color: var(--gold); border: 1px solid var(--gold); background: rgba(234, 195, 108, .1); }
+.reward .rl { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--frost-dim); font-weight: 700; }
+.reward .note { font-family: var(--f-hand); font-size: 24px; line-height: 1.15; color: var(--ice); }
+.reward.in { animation: rise .5s cubic-bezier(.2, 1.4, .4, 1); }
+
+/* финал */
+.summary { display: grid; gap: 10px; }
+.summary h3 { margin: 6px 0 0; font-family: var(--f-display); font-size: 15px; font-weight: 700; }
+.summary .quote { font-size: 22px; white-space: pre-wrap; }
+.mini-phrase { display: flex; flex-wrap: wrap; gap: 6px 12px; }
+.mini-phrase .word { gap: 3px; }
+.mini-phrase .slot { width: 26px; height: 34px; background: var(--card-2); border-color: #b9c6da; }
+.mini-phrase .slot .l { font-size: 14px; padding-top: 4px; color: #9aa7bf; }
+.mini-phrase .slot .n { display: none; }
+.mini-phrase .slot.got { background: #fff4dc; border-color: #c99a2e; }
+.mini-phrase .slot.got .l { color: #8a6210; }
+#fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 60; }
+
+/* панель дарителя */
+.giver-list { display: grid; gap: 10px; }
+.giver-list label { display: flex; gap: 10px; align-items: center; font-weight: 500; }
+
+footer.foot { color: var(--frost-dim); font-size: 13px; text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
+}
+</style>
+
+<canvas id="snow" aria-hidden="true"></canvas>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">Адвент-календарь · декабрь 2026</div>
+    <h1 id="title">Декабрь <span class="name">Илоны</span></h1>
+    <div class="sub">31 окошко до Нового года. Каждый день — одна маленькая радость и одна буква тайной фразы.</div>
+    <div class="status" id="status"></div>
+  </header>
+
+  <section class="board" aria-labelledby="board-h">
+    <div class="board-head">
+      <h2 id="board-h">Копилка букв</h2>
+      <p id="board-count"></p>
+    </div>
+    <div class="phrase" id="phrase"></div>
+  </section>
+
+  <main class="grid" id="grid" aria-label="Окошки календаря"></main>
+
+  <footer class="foot">Окошки открываются по одному в день. Пропущенные можно открыть позже.</footer>
+</div>
+
+<dialog class="sheet" id="sheet" aria-labelledby="sheet-title">
+  <div class="sheet-in" id="sheet-in"></div>
+</dialog>
+
+<dialog class="sheet" id="giver" aria-labelledby="giver-title">
+  <div class="sheet-in">
+    <div class="sheet-top">
+      <div>
+        <div class="eyebrow">Только для того, кто дарит</div>
+        <h2 id="giver-title">Режим дарителя</h2>
+      </div>
+      <button class="x" type="button" data-close aria-label="Закрыть">×</button>
+    </div>
+    <p class="intro">В режиме просмотра открыты все окошки, а прогресс хранится отдельно, поэтому настоящий календарь не испортится.</p>
+    <div class="giver-list">
+      <label><input type="checkbox" id="g-preview"> Открыть все окошки для проверки</label>
+      <div class="row">
+        <button class="btn ghost" type="button" id="g-reset">Сбросить прогресс</button>
+        <button class="btn" type="button" id="g-reset-yes" hidden>Да, стереть всё</button>
+      </div>
+      <p class="hint" id="g-reset-msg"></p>
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<script>
+/* ================================================================
+   НАСТРОЙКИ — меняй здесь
+   ================================================================ */
+const CONFIG = {
+  name: 'Илона',
+  year: 2026,
+  // Тайная фраза: ровно 30 букв (пробелы не считаются). Буквы выдаются в дни 1–30 вразнобой.
+  phrase: 'ГЛАВНЫЙ ПОДАРОК ЖДЁТ ТЕБЯ ПОД ЁЛКОЙ',
+  giver: 'тому, кто подарил тебе этот календарь',
+  finale: 'С Новым годом, Илона! Спасибо за этот декабрь. Пусть в 2027-м сбудется всё, что ты загадала первого числа, и ещё немного сверху.',
+};
+
+// type: write | riddle | snow | coupon | quiz | task | scratch | anagram | memory | fortune | finale
+const DAYS = [
+  { d: 1, type: 'write', key: 'wish', title: 'Желание на декабрь',
+    intro: 'Напиши одно желание, которое хочешь успеть исполнить до конца года. Я спрячу его и верну тебе 31 декабря.',
+    placeholder: 'Хочу, чтобы…', note: 'Записано. Теперь у декабря есть цель.' },
+  { d: 2, type: 'riddle', title: 'Утренняя загадка',
+    q: 'Не снег и не лёд, а серебром деревья уберёт.', answers: ['иней'], hint: 'Бывает на ветках после морозной ночи.',
+    note: 'Красиво, как иней на рябине.' },
+  { d: 3, type: 'snow', title: 'Снегопад', target: 15, seconds: 20,
+    intro: 'Поймай 15 снежинок за 20 секунд. Просто нажимай на них.', note: 'Ловкость рук и никакого мошенства.' },
+  { d: 4, type: 'coupon', title: 'Вечер кино',
+    intro: 'Сегодня тебе положен купон.', ct: 'Вечер кино', cx: 'Фильм выбираешь ты. Плед, какао и попкорн — не твоя забота.',
+    note: 'Купон бессрочный, но лучше не откладывать.' },
+  { d: 5, type: 'quiz', title: 'Вопрос про снежинки',
+    q: 'Сколько лучей у настоящей снежинки?', options: ['4', '5', '6', '8'], correct: 2,
+    fact: 'Молекулы воды при замерзании выстраиваются в шестиугольную решётку, поэтому у снежинок почти всегда шесть лучей. Посмотри на снег на этой странице.',
+    note: 'Шесть лучей, как и положено.' },
+  { d: 6, type: 'task', title: 'Бумажная снежинка',
+    intro: 'Вырежи снежинку из бумаги и приклей на окно. Бонус: сфотографируй и пришли мне.',
+    note: 'Окно стало немного новогоднее.' },
+  { d: 7, type: 'scratch', title: 'Морозное стекло',
+    intro: 'Окно затянуло инеем. Сотри его пальцем, чтобы прочитать.',
+    reveal: 'Ты умеешь делать обычный день теплее. Это редкий талант.',
+    note: 'Это не комплимент, это факт.' },
+  { d: 8, type: 'anagram', title: 'Перепутанное слово',
+    intro: 'Буквы рассыпались. Собери слово.', answer: 'МАНДАРИН', hint: 'Главный запах Нового года.',
+    note: 'Почисти сегодня хотя бы один. Это обязательная часть задания.' },
+  { d: 9, type: 'memory', title: 'Ёлочные пары', pairs: 6,
+    intro: 'Найди все пары игрушек.', note: 'Память как у слона. Новогоднего.' },
+  { d: 10, type: 'task', title: 'Какао-вечер',
+    intro: 'Сегодня вечером — какао. Вот рецепт:',
+    recipe: ['250 мл молока подогреть, не доводя до кипения', '2 ч. л. какао и 1 ч. л. сахара размешать в паре ложек молока', 'влить в кастрюльку, добавить щепотку корицы', 'сверху маршмеллоу, пить медленно и под плед'],
+    done: 'Выпито', note: 'Тепло изнутри засчитано.' },
+  { d: 11, type: 'riddle', title: 'Ночной художник',
+    q: 'Без кисти и без красок, а за ночь все окна разрисовал.', answers: ['мороз', 'дедмороз'], hint: 'Щиплет за нос.',
+    note: 'Он и сегодня ночью поработает.' },
+  { d: 12, type: 'fortune', title: 'Снежный шар',
+    intro: 'Встряхни шар, и он покажет предсказание на остаток декабря.', note: 'Шар врать не станет.' },
+  { d: 13, type: 'task', title: 'Охота за огоньками',
+    intro: 'Найди сегодня на улице пять разных новогодних украшений: гирлянду, ёлку, венок, что угодно. Самое красивое сфотографируй.',
+    done: 'Нашла все пять', note: 'Город наряжается для тебя.' },
+  { d: 14, type: 'quiz', title: 'Откуда календарь',
+    q: 'В какой стране придумали адвент-календари?', options: ['Финляндия', 'Германия', 'Россия', 'США'], correct: 1,
+    fact: 'Первые печатные адвент-календари появились в Германии в начале XX века. А до этого дни до праздника просто отмечали мелом на двери.',
+    note: 'Теперь ты знаешь больше, чем вчера.' },
+  { d: 15, type: 'snow', title: 'Метель', target: 22, seconds: 20,
+    intro: 'Метель усиливается: 22 снежинки за 20 секунд.', note: 'Половина декабря позади!' },
+  { d: 16, type: 'coupon', title: 'Одно желание',
+    intro: 'Сегодняшний купон очень серьёзный.', ct: 'Одно желание', cx: 'Исполню одно твоё желание. В разумных пределах, но пределы широкие.',
+    note: 'Подумай хорошенько.' },
+  { d: 17, type: 'riddle', title: 'Загадка с закрытыми глазами',
+    q: 'Что можно увидеть с закрытыми глазами?', answers: ['сон', 'сны'], hint: 'Бывает цветным.',
+    note: 'Пусть сегодня приснится что-нибудь снежное.' },
+  { d: 18, type: 'write', key: 'playlist', title: 'Новогодний плейлист',
+    intro: 'Запиши пять песен, без которых у тебя не наступает Новый год. 31-го включим.',
+    placeholder: '1. \n2. \n3. \n4. \n5. ', note: 'Плейлист принят. Диджей на 31-е найден.' },
+  { d: 19, type: 'anagram', title: 'Кто во дворе',
+    intro: 'Опять всё рассыпалось. Собери слово.', answer: 'СНЕГОВИК', hint: 'Морковка вместо носа.',
+    note: 'Если выпадет снег, слепим настоящего.' },
+  { d: 20, type: 'scratch', title: 'Официальное разрешение',
+    intro: 'Под инеем документ. Сотри и ознакомься.',
+    reveal: 'Сегодня вечером тебе разрешено ничего не делать. Совсем. Это официально.',
+    note: 'Подпись и печать прилагаются.' },
+  { d: 21, type: 'quiz', title: 'Особенный день',
+    q: 'Чем особенно 21 декабря?', options: ['Самая длинная ночь в году', 'День рождения Деда Мороза', 'Последний день осени по старому стилю', 'День первого снега'], correct: 0,
+    fact: 'Сегодня зимнее солнцестояние. С завтрашнего дня световой день начнёт расти: сначала на минуту в сутки, потом всё быстрее.',
+    note: 'Дальше будет только светлее.' },
+  { d: 22, type: 'write', key: 'letter', title: 'Письмо в следующий декабрь',
+    intro: 'Напиши пару строк себе в декабрь 2027 года. Что хочешь себе сказать или пожелать?',
+    placeholder: 'Дорогая я из 2027-го…', note: 'Сохраню. Через год напомню.' },
+  { d: 23, type: 'memory', title: 'Большие пары', pairs: 8,
+    intro: 'Теперь игрушек больше. Найди все пары.', note: 'Безупречно.' },
+  { d: 24, type: 'riddle', title: 'Загадка с карниза',
+    q: 'Растёт она вниз головою, не летом растёт, а зимою. Но солнце её припечёт — заплачет она и умрёт.',
+    answers: ['сосулька', 'сосульки'], hint: 'Висит с крыши.', note: 'Только не стой под ними.' },
+  { d: 25, type: 'fortune', title: 'Шар ещё раз',
+    intro: 'Шар зарядился за две недели. Встряхни снова.', note: 'Запомни это предсказание.' },
+  { d: 26, type: 'task', title: 'Тайное доброе дело',
+    intro: 'Сделай сегодня что-нибудь хорошее для кого-то и никому об этом не говори. Мне можно.',
+    done: 'Сделано тайно', note: 'Где-то стало чуть теплее, и никто не знает почему.' },
+  { d: 27, type: 'quiz', title: 'Упряжка',
+    q: 'Сколько оленей в упряжке Санта-Клауса вместе с Рудольфом?', options: ['6', '8', '9', '12'], correct: 2,
+    fact: 'Восемь оленей из стихотворения 1823 года и Рудольф с красным носом, которого добавили в 1939-м. А у Деда Мороза, кстати, тройка лошадей.',
+    note: 'Олени одобряют.' },
+  { d: 28, type: 'anagram', title: 'Будет в полночь',
+    intro: 'Последнее рассыпанное слово.', answer: 'ФЕЙЕРВЕРК', hint: 'Бах, и небо в искрах.',
+    note: 'Скоро увидишь настоящий.' },
+  { d: 29, type: 'snow', title: 'Буран', target: 30, seconds: 25,
+    intro: 'Финальная метель: 30 снежинок за 25 секунд.', note: 'Ты прошла все снегопады декабря.' },
+  { d: 30, type: 'write', key: 'best', title: 'Итоги года',
+    intro: 'Три лучших момента 2026 года. Можно коротко.', placeholder: '1. \n2. \n3. ',
+    note: 'Хороший был год. Завтра финал.' },
+  { d: 31, type: 'finale', title: 'Тайная фраза',
+    intro: 'Все буквы собраны в копилку. Сложи из них фразу и впиши её сюда.' },
+];
+
+const SYMBOLS = ['🎄', '🍊', '⛄', '🎁', '⭐', '🦌', '🧣', '🔔', '🕯️', '🍪'];
+const FORTUNES = [
+  'До конца года тебя ждёт неожиданно хорошая новость.',
+  'Ближайшие выходные будут уютнее, чем ты планировала.',
+  'Кто-то вспомнит о тебе с теплом. Возможно, уже вспомнил.',
+  'В январе ты начнёшь что-то, чем будешь гордиться.',
+  'Скоро ты рассмеёшься так, что заболит живот.',
+  'Твоё желание от первого декабря ближе, чем кажется.',
+  'Новый год будет таким, каким ты его встретишь. Встречай с мандарином.',
+];
+
+/* ================================================================
+   Дальше — механика
+   ================================================================ */
+const $ = (s, el = document) => el.querySelector(s);
+const h = (tag, attrs = {}, ...kids) => {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'class') el.className = v;
+    else if (k === 'text') el.textContent = v;
+    else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else if (v !== false && v != null) el.setAttribute(k, v === true ? '' : v);
+  }
+  for (const kid of kids.flat()) if (kid != null) el.append(kid.nodeType ? kid : document.createTextNode(kid));
+  return el;
+};
+const plural = (n, [one, few, many]) => {
+  const a = Math.abs(n) % 100, b = a % 10;
+  if (a > 10 && a < 20) return many;
+  if (b > 1 && b < 5) return few;
+  if (b === 1) return one;
+  return many;
+};
+const norm = s => String(s).toLowerCase().replace(/ё/g, 'е').replace(/[^a-zа-я0-9]/g, '');
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const MONTHS_GEN = 'декабря';
+
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function shuffled(arr, seed) { const r = rng(seed), a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+// буквы фразы и кто какую выдаёт
+const LETTERS = [...CONFIG.phrase].filter(c => c !== ' ');
+const PERM = shuffled(LETTERS.map((_, i) => i), 1225);           // день d → индекс буквы PERM[d-1]
+const DAY_OF_LETTER = []; PERM.forEach((li, k) => { DAY_OF_LETTER[li] = k + 1; });
+const letterOf = d => (d <= LETTERS.length ? LETTERS[PERM[d - 1]] : null);
+
+// состояние
+let preview = location.hash === '#preview';
+const storeKey = () => preview ? 'advent-ilona-preview' : 'advent-ilona';
+let state = load();
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(storeKey())); if (s && s.done) return s; } catch (e) {}
+  return { done: {}, data: {} };
+}
+function save() { try { localStorage.setItem(storeKey(), JSON.stringify(state)); } catch (e) {} }
+
+function now() { return new Date(); }
+function isOpen(d) { return preview || now() >= new Date(CONFIG.year, 11, d); }
+function todayNum() { const n = now(); return (n.getFullYear() === CONFIG.year && n.getMonth() === 11) ? n.getDate() : 0; }
+const collected = () => Object.keys(state.done).filter(d => +d <= LETTERS.length && state.done[d]).length;
+
+/* ——— шапка ——— */
+function renderStatus() {
+  const box = $('#status'); box.textContent = '';
+  const n = now();
+  const ny = new Date(CONFIG.year + 1, 0, 1);
+  const first = new Date(CONFIG.year, 11, 1);
+  const dayMs = 864e5;
+  if (preview) box.append(h('span', { class: 'preview-pill' }, 'Режим дарителя: всё открыто', h('button', { type: 'button', onclick: () => setPreview(false) }, 'выйти')));
+  if (n < first) {
+    const left = Math.ceil((first - n) / dayMs);
+    box.append(h('span', { class: 'chip hot' }, 'Первое окошко через', h('b', {}, `${left} ${plural(left, ['день', 'дня', 'дней'])}`)));
+  } else if (n < ny) {
+    const t = todayNum();
+    if (t) box.append(h('span', { class: 'chip hot' }, 'Сегодня открывается окошко', h('b', {}, `№${t}`)));
+    const left = Math.ceil((ny - n) / dayMs);
+    if (left > 1) box.append(h('span', { class: 'chip' }, 'До Нового года', h('b', {}, `${left} ${plural(left, ['день', 'дня', 'дней'])}`)));
+    else box.append(h('span', { class: 'chip' }, h('b', {}, 'Новый год уже сегодня ночью')));
+  } else {
+    box.append(h('span', { class: 'chip hot' }, h('b', {}, 'С Новым годом!'), 'Все окошки открыты'));
+  }
+  box.append(h('span', { class: 'chip' }, 'Открыто', h('b', {}, `${Object.keys(state.done).length} из 31`)));
+}
+
+/* ——— копилка ——— */
+function phraseEl(freshIdx = -1, mini = false) {
+  const wrap = h('div', { class: mini ? 'mini-phrase' : 'phrase' });
+  let li = 0;
+  for (const w of CONFIG.phrase.split(' ')) {
+    const word = h('span', { class: 'word' });
+    for (const ch of w) {
+      const d = DAY_OF_LETTER[li];
+      const got = !!state.done[d];
+      word.append(h('span', { class: 'slot' + (got ? ' got' : '') + (li === freshIdx ? ' fresh' : ''), title: got ? `Буква из ${d} ${MONTHS_GEN}` : `Появится ${d} ${MONTHS_GEN}` },
+        h('span', { class: 'l' }, got ? ch : '·'), h('span', { class: 'n' }, String(d))));
+      li++;
+    }
+    wrap.append(word);
+  }
+  return wrap;
+}
+function renderBoard(freshIdx) {
+  $('#phrase').replaceWith(Object.assign(phraseEl(freshIdx), { id: 'phrase' }));
+  const c = collected();
+  $('#board-count').innerHTML = '';
+  $('#board-count').append('Собрано ', h('b', {}, `${c} из ${LETTERS.length}`), c === LETTERS.length ? ' — фраза готова' : ' — под каждой клеткой номер дня');
+}
+
+/* ——— сетка ——— */
+const SIZE = { 31: 'big', 1: 'wide', 12: 'wide', 22: 'wide', 7: 'tall', 18: 'tall', 25: 'tall' };
+const ORDER = (() => { const a = shuffled([...Array(30)].map((_, i) => i + 1), 2026); a.splice(21, 0, 31); return a; })();
+const LOCK_SVG = '<svg class="lock" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5 7V5a3 3 0 0 1 6 0v2"/></svg>';
+
+function renderGrid() {
+  const grid = $('#grid'); grid.textContent = '';
+  const t = todayNum();
+  for (const d of ORDER) {
+    const open = isOpen(d), done = !!state.done[d];
+    const v = 'v' + (((d * 7) % 4) + 1);
+    const cls = ['door', v, SIZE[d] || '', open ? '' : 'locked', done ? 'done' : '', (!done && open && d === t) ? 'today' : ''].filter(Boolean).join(' ');
+    const letter = letterOf(d);
+    const label = `${d} декабря` + (done ? ', открыто' : open ? ', можно открыть' : ', пока закрыто');
+    const btn = h('button', { class: cls, type: 'button', 'data-day': d, 'aria-label': label });
+    const inside = h('span', { class: 'inside' },
+      done ? h('span', { class: 'il' }, d === 31 ? '★' : letter) : h('span', { class: 'iq' }, '?'),
+      h('span', { class: 'id' }, `${d} дек`));
+    const leaf = h('span', { class: 'leaf' }, h('span', { class: 'num' }, String(d)), h('span', { class: 'knob' }));
+    if (d === 31) leaf.prepend(h('span', { class: 'big-label' }, 'Новогодняя ночь'));
+    if (!open) leaf.insertAdjacentHTML('beforeend', LOCK_SVG);
+    btn.append(inside, leaf);
+    btn.addEventListener('click', () => onDoor(d, btn));
+    grid.append(btn);
+  }
+}
+
+function onDoor(d, btn) {
+  if (!isOpen(d)) {
+    btn.classList.remove('nope'); void btn.offsetWidth; btn.classList.add('nope');
+    toast(`Окошко ${d} откроется ${d} декабря. Подсматривать нельзя.`);
+    return;
+  }
+  if (state.done[d]) { openSheet(d); return; }
+  btn.classList.add('opening');
+  setTimeout(() => openSheet(d), reduced ? 0 : 420);
+}
+
+let toastT;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* ——— окно дня ——— */
+const TYPE_NAME = { write: 'Записка', riddle: 'Загадка', snow: 'Игра', coupon: 'Купон', quiz: 'Вопрос', task: 'Задание', scratch: 'Сюрприз', anagram: 'Слово', memory: 'Игра', fortune: 'Предсказание', finale: 'Финал' };
+let cleanup = [];
+let freshAfterClose = -1;
+
+function openSheet(d) {
+  const day = DAYS[d - 1];
+  const box = $('#sheet-in'); box.textContent = '';
+  cleanup.forEach(f => f()); cleanup = [];
+  box.append(
+    h('div', { class: 'sheet-top' },
+      h('div', {}, h('div', { class: 'eyebrow' }, `${d} декабря · ${TYPE_NAME[day.type]}`), h('h2', { id: 'sheet-title' }, day.title)),
+      h('button', { class: 'x', type: 'button', 'aria-label': 'Закрыть', onclick: () => $('#sheet').close() }, '×')));
+  if (day.intro) box.append(h('p', { class: 'intro' }, day.intro));
+  const act = h('div', { class: 'act' });
+  const rewardSlot = h('div');
+  box.append(act, rewardSlot);
+  const finish = () => complete(d, rewardSlot);
+  if (state.done[d] && day.type !== 'finale') rewardSlot.append(rewardEl(d, false));
+  (RENDER[day.type] || RENDER.task)(day, act, finish);
+  const dlg = $('#sheet');
+  if (!dlg.open) dlg.showModal();
+}
+
+$('#sheet').addEventListener('close', () => {
+  cleanup.forEach(f => f()); cleanup = [];
+  renderGrid(); renderStatus(); renderBoard(freshAfterClose); freshAfterClose = -1;
+});
+$('#sheet').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.close(); });
+
+function complete(d, rewardSlot) {
+  if (state.done[d]) return;
+  state.done[d] = true; save();
+  if (d <= LETTERS.length) freshAfterClose = PERM[d - 1];
+  rewardSlot.textContent = '';
+  rewardSlot.append(rewardEl(d, true));
+  burst();
+}
+function rewardEl(d, anim) {
+  const day = DAYS[d - 1], L = letterOf(d);
+  if (!L) return h('div');
+  return h('div', { class: 'reward' + (anim ? ' in' : '') },
+    h('div', { class: 'big' }, L),
+    h('div', { class: 'rl' }, 'Буква в копилку'),
+    h('div', { class: 'note' }, day.note || 'Готово!'));
+}
+
+/* ——— типы активностей ——— */
+const RENDER = {
+  write(day, act, done) {
+    const id = 'w-' + day.key;
+    const ta = h('textarea', { class: 'field', id, placeholder: day.placeholder || '', 'aria-label': day.title });
+    ta.value = state.data[day.key] || '';
+    const btn = h('button', { class: 'btn', type: 'button' }, state.data[day.key] ? 'Обновить' : 'Сохранить');
+    btn.addEventListener('click', () => {
+      const v = ta.value.trim();
+      if (!v) { ta.classList.remove('shake'); void ta.offsetWidth; ta.classList.add('shake'); ta.focus(); return; }
+      state.data[day.key] = v; save(); btn.textContent = 'Сохранено'; done();
+    });
+    act.append(ta, h('div', { class: 'row' }, btn));
+  },
+
+  riddle(day, act, done) {
+    act.append(h('div', { class: 'quote' }, day.q));
+    if (state.done[day.d]) { act.append(h('p', { class: 'hint' }, 'Ответ: ', h('b', {}, day.answers[0]))); return; }
+    const inp = h('input', { class: 'field', id: 'r-' + day.d, placeholder: 'Твой ответ', autocomplete: 'off', 'aria-label': 'Ответ' });
+    const hint = h('p', { class: 'hint' });
+    let wrong = 0;
+    const give = h('button', { class: 'btn ghost', type: 'button', hidden: true }, 'Сдаюсь');
+    const check = () => {
+      if (!inp.value.trim()) return;
+      if (day.answers.map(norm).includes(norm(inp.value))) {
+        inp.disabled = true; hint.textContent = ''; hint.append('Верно! Ответ: ', h('b', {}, day.answers[0])); give.hidden = true; ok.disabled = true; done();
+      } else {
+        wrong++; inp.classList.remove('shake'); void inp.offsetWidth; inp.classList.add('shake');
+        hint.textContent = wrong === 1 ? 'Не то. Попробуй ещё.' : 'Подсказка: ' + day.hint;
+        if (wrong >= 3) give.hidden = false;
+      }
+    };
+    const ok = h('button', { class: 'btn', type: 'button', onclick: check }, 'Проверить');
+    give.addEventListener('click', () => { inp.value = day.answers[0]; check(); });
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+    act.append(inp, h('div', { class: 'row' }, ok, give), hint);
+    setTimeout(() => inp.focus(), 50);
+  },
+
+  quiz(day, act, done) {
+    act.append(h('div', { class: 'quote' }, day.q));
+    const opts = h('div', { class: 'opts' });
+    const fact = h('p', { class: 'hint', hidden: true }, day.fact);
+    day.options.forEach((o, i) => {
+      const b = h('button', { class: 'opt', type: 'button' }, o);
+      if (state.done[day.d] && i === day.correct) b.classList.add('right');
+      b.addEventListener('click', () => {
+        if (b.classList.contains('wrong') || opts.dataset.solved) return;
+        if (i === day.correct) { b.classList.add('right'); opts.dataset.solved = 1; fact.hidden = false; done(); }
+        else { b.classList.add('wrong'); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); }
+      });
+      opts.append(b);
+    });
+    if (state.done[day.d]) { opts.dataset.solved = 1; fact.hidden = false; }
+    act.append(opts, fact);
+  },
+
+  task(day, act, done) {
+    if (day.recipe) act.append(h('ol', { class: 'recipe' }, day.recipe.map(r => h('li', {}, r))));
+    const btn = h('button', { class: 'btn', type: 'button', disabled: !!state.done[day.d] }, state.done[day.d] ? 'Выполнено' : (day.done || 'Сделано!'));
+    btn.addEventListener('click', () => { btn.disabled = true; btn.textContent = 'Выполнено'; done(); });
+    act.append(h('div', { class: 'row' }, btn));
+  },
+
+  coupon(day, act, done) {
+    const c = h('div', { class: 'coupon' },
+      h('div', { class: 'cc' }, `Купон № ${String(day.d).padStart(2, '0')} · декабрь ${CONFIG.year}`),
+      h('div', { class: 'ct' }, day.ct), h('p', {}, day.cx));
+    const after = h('p', { class: 'hint', hidden: !state.done[day.d] }, `Покажи этот экран ${CONFIG.giver}.`);
+    const btn = h('button', { class: 'btn', type: 'button', hidden: !!state.done[day.d] }, 'Забрать купон');
+    btn.addEventListener('click', () => { btn.hidden = true; after.hidden = false; done(); });
+    act.append(c, h('div', { class: 'row' }, btn), after);
+  },
+
+  fortune(day, act, done) {
+    const pick = FORTUNES[(day.d * 5) % FORTUNES.length];
+    const out = h('div', { class: 'quote', hidden: !state.done[day.d] }, pick);
+    const g = h('button', { class: 'globe', type: 'button', 'aria-label': 'Встряхнуть шар' }, state.done[day.d] ? '' : 'встряхни');
+    g.addEventListener('click', () => {
+      g.classList.remove('shaking'); void g.offsetWidth; g.classList.add('shaking'); g.textContent = '';
+      setTimeout(() => { out.hidden = false; done(); }, reduced ? 0 : 1000);
+    });
+    act.append(h('div', { class: 'globe-wrap' }, g), out);
+  },
+
+  scratch(day, act, done) {
+    const wrap = h('div', { class: 'scratch' }, h('div', { class: 'under' }, day.reveal));
+    act.append(wrap);
+    if (state.done[day.d]) return;
+    const cv = h('canvas'); wrap.append(cv);
+    requestAnimationFrame(() => {
+      const r = wrap.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1);
+      cv.width = r.width * dpr; cv.height = r.height * dpr;
+      const c = cv.getContext('2d'); c.scale(dpr, dpr);
+      const g = c.createLinearGradient(0, 0, r.width, r.height);
+      g.addColorStop(0, '#dbe7f5'); g.addColorStop(1, '#a9c0de');
+      c.fillStyle = g; c.fillRect(0, 0, r.width, r.height);
+      c.strokeStyle = 'rgba(255,255,255,.7)'; c.lineWidth = 1.2;
+      const rr = rng(day.d);
+      for (let i = 0; i < 26; i++) drawFlake(c, rr() * r.width, rr() * r.height, 6 + rr() * 12);
+      c.fillStyle = '#4a6390'; c.font = '600 15px Manrope, sans-serif'; c.textAlign = 'center';
+      c.fillText('сотри иней пальцем', r.width / 2, r.height / 2 + 5);
+      c.globalCompositeOperation = 'destination-out';
+      let down = false, moves = 0, finished = false;
+      const at = e => { const b = cv.getBoundingClientRect(); return [e.clientX - b.left, e.clientY - b.top]; };
+      const rub = e => {
+        if (!down || finished) return;
+        const [x, y] = at(e); c.beginPath(); c.arc(x, y, 22, 0, Math.PI * 2); c.fill();
+        if (++moves % 12 === 0) {
+          const img = c.getImageData(0, 0, cv.width, cv.height).data; let clear = 0, tot = 0;
+          for (let i = 3; i < img.length; i += 64) { tot++; if (img[i] < 40) clear++; }
+          if (clear / tot > .5) { finished = true; cv.style.transition = 'opacity .6s'; cv.style.opacity = 0; setTimeout(() => cv.remove(), 650); done(); }
+        }
+      };
+      cv.addEventListener('pointerdown', e => { down = true; cv.setPointerCapture(e.pointerId); rub(e); });
+      cv.addEventListener('pointermove', rub);
+      cv.addEventListener('pointerup', () => { down = false; });
+    });
+  },
+
+  anagram(day, act, done) {
+    const word = day.answer;
+    if (state.done[day.d]) { act.append(h('div', { class: 'tiles ans' }, [...word].map(ch => h('span', { class: 'tile' }, ch)))); return; }
+    let letters = shuffled([...word], day.d * 31);
+    if (letters.join('') === word) letters = letters.reverse();
+    const ans = h('div', { class: 'tiles ans', 'aria-label': 'Собранное слово' });
+    const src = h('div', { class: 'tiles', 'aria-label': 'Буквы' });
+    const picked = []; // индексы из src
+    const hint = h('p', { class: 'hint' }, 'Подсказка: ', h('b', {}, day.hint));
+    const draw = () => {
+      ans.textContent = '';
+      for (let i = 0; i < word.length; i++) {
+        const k = picked[i];
+        const t = h('button', { class: 'tile' + (k == null ? ' empty' : ''), type: 'button', 'aria-label': k == null ? 'пусто' : letters[k] }, k == null ? '' : letters[k]);
+        if (k != null) t.addEventListener('click', () => { picked.splice(i, 1); draw(); });
+        ans.append(t);
+      }
+      [...src.children].forEach((t, k) => t.classList.toggle('used', picked.includes(k)));
+      if (picked.length === word.length) {
+        if (picked.map(k => letters[k]).join('') === word) { src.remove(); done(); }
+        else { ans.classList.remove('shake'); void ans.offsetWidth; ans.classList.add('shake'); setTimeout(() => { picked.length = 0; draw(); }, 600); }
+      }
+    };
+    letters.forEach((ch, k) => src.append(h('button', { class: 'tile', type: 'button', onclick: () => { if (!picked.includes(k) && picked.length < word.length) { picked.push(k); draw(); } } }, ch)));
+    act.append(ans, src, hint);
+    draw();
+  },
+
+  memory(day, act, done) {
+    const syms = shuffled(SYMBOLS, day.d).slice(0, day.pairs);
+    const deck = shuffled([...syms, ...syms], day.d * 13 + Date.now() % 1000);
+    const grid = h('div', { class: 'mem' });
+    const info = h('p', { class: 'hint' }, 'Ходов: 0');
+    let open = [], moves = 0, matched = 0, lock = false;
+    deck.forEach(s => {
+      const c = h('button', { class: 'mcard', type: 'button', 'aria-label': 'Карточка' }, s);
+      c.addEventListener('click', () => {
+        if (lock || c.classList.contains('up') || c.classList.contains('ok')) return;
+        c.classList.add('up'); c.setAttribute('aria-label', s); open.push(c);
+        if (open.length === 2) {
+          moves++; info.textContent = `Ходов: ${moves}`;
+          const [a, b] = open; open = [];
+          if (a.textContent === b.textContent) {
+            a.classList.replace('up', 'ok'); b.classList.replace('up', 'ok'); matched++;
+            if (matched === day.pairs) { info.textContent = `Все пары за ${moves} ${plural(moves, ['ход', 'хода', 'ходов'])}!`; done(); }
+          } else { lock = true; setTimeout(() => { a.classList.remove('up'); b.classList.remove('up'); a.setAttribute('aria-label', 'Карточка'); b.setAttribute('aria-label', 'Карточка'); lock = false; }, 800); }
+        }
+      });
+      grid.append(c);
+    });
+    act.append(grid, info);
+  },
+
+  snow(day, act, done) {
+    const box = h('div', { class: 'game' });
+    const cv = h('canvas');
+    const hud = h('div', { class: 'hud' }, h('span', { id: 'g-c' }, `0 / ${day.target}`), h('span', { id: 'g-t' }, `${day.seconds} с`));
+    const ov = h('div', { class: 'overlay' });
+    box.append(cv, hud, ov);
+    act.append(box);
+    let flakes = [], caught = 0, t0 = 0, running = false, raf = 0, W = 0, H = 0, c, spawnAcc = 0, last = 0, sparks = [];
+    const showOverlay = (text, label) => {
+      ov.textContent = ''; ov.hidden = false;
+      ov.append(h('p', {}, text), h('button', { class: 'btn', type: 'button', onclick: start }, label));
+    };
+    const setup = () => {
+      const r = box.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1);
+      W = r.width; H = 300; cv.width = W * dpr; cv.height = H * dpr;
+      c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    function start() {
+      setup(); flakes = []; sparks = []; caught = 0; running = true; ov.hidden = true;
+      t0 = performance.now(); last = t0; spawnAcc = 0;
+      cancelAnimationFrame(raf); raf = requestAnimationFrame(tick);
+    }
+    function tick(ts) {
+      const dt = Math.min(50, ts - last) / 1000; last = ts;
+      const left = Math.max(0, day.seconds - (ts - t0) / 1000);
+      spawnAcc += dt * (1.6 + day.target / day.seconds * 0.9);
+      while (spawnAcc > 1) { spawnAcc--; flakes.push({ x: 20 + Math.random() * (W - 40), y: -20, r: 11 + Math.random() * 9, vy: 55 + Math.random() * 70 + day.target, sw: Math.random() * 6.28, rot: Math.random() * 6 }); }
+      c.clearRect(0, 0, W, H);
+      c.strokeStyle = '#e7eef8'; c.lineWidth = 2; c.lineCap = 'round';
+      flakes = flakes.filter(f => {
+        f.y += f.vy * dt; f.sw += dt * 2; f.rot += dt; const x = f.x + Math.sin(f.sw) * 14;
+        f.cx = x; drawFlake(c, x, f.y, f.r, f.rot); return f.y < H + 30;
+      });
+      sparks = sparks.filter(s => { s.life -= dt; s.x += s.vx * dt; s.y += s.vy * dt; c.fillStyle = `rgba(255,139,45,${Math.max(0, s.life * 2)})`; c.beginPath(); c.arc(s.x, s.y, 2.5, 0, 6.3); c.fill(); return s.life > 0; });
+      $('#g-c', box).textContent = `${caught} / ${day.target}`;
+      $('#g-t', box).textContent = `${Math.ceil(left)} с`;
+      if (caught >= day.target) { running = false; showOverlay('Поймано! Все снежинки твои.', 'Сыграть ещё'); done(); return; }
+      if (left <= 0) { running = false; showOverlay(`Поймано ${caught} из ${day.target}. Почти! Ещё попытка?`, 'Ещё раз'); return; }
+      raf = requestAnimationFrame(tick);
+    }
+    cv.addEventListener('pointerdown', e => {
+      if (!running) return;
+      const b = cv.getBoundingClientRect(), x = e.clientX - b.left, y = e.clientY - b.top;
+      let best = -1, bd = 1e9;
+      flakes.forEach((f, i) => { const dd = Math.hypot(f.cx - x, f.y - y); if (dd < f.r + 16 && dd < bd) { bd = dd; best = i; } });
+      if (best >= 0) {
+        const f = flakes.splice(best, 1)[0]; caught++;
+        for (let i = 0; i < 10; i++) { const a = i / 10 * 6.28; sparks.push({ x: f.cx, y: f.y, vx: Math.cos(a) * 120, vy: Math.sin(a) * 120, life: .5 }); }
+      }
+    });
+    showOverlay(state.done[day.d] ? 'Уже пройдено. Можно сыграть ради удовольствия.' : `Цель: ${day.target} снежинок за ${day.seconds} секунд.`, 'Начать');
+    cleanup.push(() => { running = false; cancelAnimationFrame(raf); });
+  },
+
+  finale(day, act) {
+    const c = collected();
+    act.append(h('p', { class: 'hint' }, `В копилке ${c} из ${LETTERS.length} букв.` + (c < LETTERS.length ? ' Пустые клетки можно угадать по смыслу или вернуться в пропущенные окошки.' : '')));
+    act.append(phraseEl(-1, true));
+    const showSummary = () => {
+      act.textContent = '';
+      act.append(h('div', { class: 'quote' }, CONFIG.phrase.charAt(0) + CONFIG.phrase.slice(1).toLowerCase()));
+      act.append(h('p', {}, CONFIG.finale));
+      const s = h('div', { class: 'summary' });
+      const part = (key, title) => { if (state.data[key]) s.append(h('h3', {}, title), h('div', { class: 'quote' }, state.data[key])); };
+      part('wish', 'Твоё желание от 1 декабря');
+      part('best', 'Лучшие моменты года');
+      part('playlist', 'Плейлист на эту ночь');
+      part('letter', 'Письмо в декабрь 2027-го');
+      if (s.children.length) act.append(s);
+      fireworks();
+    };
+    if (state.done[31]) { showSummary(); return; }
+    const inp = h('input', { class: 'field', id: 'final', placeholder: 'Впиши фразу целиком', autocomplete: 'off', 'aria-label': 'Тайная фраза' });
+    const msg = h('p', { class: 'hint' });
+    let wrong = 0;
+    const reveal = h('button', { class: 'btn ghost', type: 'button', hidden: true }, 'Показать фразу');
+    const win = () => { state.done[31] = true; save(); showSummary(); };
+    const check = () => {
+      if (!inp.value.trim()) return;
+      if (norm(inp.value) === norm(CONFIG.phrase)) win();
+      else { wrong++; inp.classList.remove('shake'); void inp.offsetWidth; inp.classList.add('shake'); msg.textContent = 'Не совсем. Посмотри на буквы ещё раз.'; if (wrong >= 2) reveal.hidden = false; }
+    };
+    reveal.addEventListener('click', win);
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+    act.append(inp, h('div', { class: 'row' }, h('button', { class: 'btn', type: 'button', onclick: check }, 'Проверить'), reveal), msg);
+  },
+};
+
+/* ——— графика ——— */
+function drawFlake(c, x, y, r, rot = 0) {
+  c.save(); c.translate(x, y); c.rotate(rot);
+  c.beginPath();
+  for (let i = 0; i < 6; i++) {   // шесть лучей, как у настоящей
+    c.rotate(Math.PI / 3);
+    c.moveTo(0, 0); c.lineTo(0, -r);
+    c.moveTo(0, -r * .55); c.lineTo(-r * .25, -r * .78);
+    c.moveTo(0, -r * .55); c.lineTo(r * .25, -r * .78);
+  }
+  c.stroke(); c.restore();
+}
+
+(function snow() {
+  const cv = $('#snow'), c = cv.getContext('2d');
+  let W, H, flakes;
+  const resize = () => {
+    const dpr = Math.min(2, devicePixelRatio || 1);
+    W = innerWidth; H = innerHeight; cv.width = W * dpr; cv.height = H * dpr; c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    flakes = [...Array(Math.round(W * H / 14000))].map(() => ({ x: Math.random() * W, y: Math.random() * H, r: 2 + Math.random() * 5, v: 12 + Math.random() * 30, s: Math.random() * 6, rot: Math.random() * 6 }));
+  };
+  resize(); addEventListener('resize', resize);
+  let last = performance.now();
+  const frame = ts => {
+    const dt = Math.min(50, ts - last) / 1000; last = ts;
+    c.clearRect(0, 0, W, H);
+    for (const f of flakes) {
+      if (!reduced) { f.y += f.v * dt; f.s += dt * .6; f.rot += dt * .2; if (f.y > H + 10) { f.y = -10; f.x = Math.random() * W; } }
+      c.strokeStyle = `rgba(231,238,248,${.25 + f.r / 14})`; c.lineWidth = f.r > 4.5 ? 1.2 : 1;
+      drawFlake(c, f.x + Math.sin(f.s) * 18, f.y, f.r, f.rot);
+    }
+    if (!reduced) requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+})();
+
+const fx = $('#fx'), fc = fx.getContext('2d');
+let parts = [], fxRaf = 0;
+function fxSize() { const dpr = Math.min(2, devicePixelRatio || 1); fx.width = innerWidth * dpr; fx.height = innerHeight * dpr; fc.setTransform(dpr, 0, 0, dpr, 0, 0); }
+function fxRun() {
+  cancelAnimationFrame(fxRaf);
+  let last = performance.now();
+  const step = ts => {
+    const dt = Math.min(50, ts - last) / 1000; last = ts;
+    fc.clearRect(0, 0, innerWidth, innerHeight);
+    parts = parts.filter(p => {
+      p.life -= dt; p.vy += 160 * dt; p.x += p.vx * dt; p.y += p.vy * dt;
+      fc.globalAlpha = Math.max(0, Math.min(1, p.life)); fc.fillStyle = p.col;
+      fc.beginPath(); fc.arc(p.x, p.y, p.r, 0, 6.3); fc.fill();
+      return p.life > 0;
+    });
+    fc.globalAlpha = 1;
+    if (parts.length) fxRaf = requestAnimationFrame(step); else fc.clearRect(0, 0, innerWidth, innerHeight);
+  };
+  fxRaf = requestAnimationFrame(step);
+}
+const COLS = ['#ff8b2d', '#eac36c', '#e7eef8', '#cfe0f2', '#f2a0b0'];
+function explode(x, y, n = 70) {
+  for (let i = 0; i < n; i++) { const a = Math.random() * 6.28, s = 80 + Math.random() * 260; parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, r: 1.5 + Math.random() * 2.5, life: .9 + Math.random() * .9, col: COLS[i % COLS.length] }); }
+}
+function burst() { if (reduced) return; fxSize(); explode(innerWidth / 2, innerHeight * .45, 60); fxRun(); }
+function fireworks() {
+  if (reduced) return; fxSize();
+  let k = 0; const iv = setInterval(() => { explode(innerWidth * (.15 + Math.random() * .7), innerHeight * (.15 + Math.random() * .4), 90); fxRun(); if (++k > 9) clearInterval(iv); }, 380);
+}
+
+/* ——— режим дарителя: 5 быстрых нажатий на заголовок или #preview ——— */
+let taps = [];
+$('#title').addEventListener('click', () => {
+  const t = Date.now(); taps = taps.filter(x => t - x < 2000); taps.push(t);
+  if (taps.length >= 5) { taps = []; $('#g-preview').checked = preview; $('#g-reset-yes').hidden = true; $('#g-reset-msg').textContent = ''; $('#giver').showModal(); }
+});
+$('#giver').addEventListener('click', e => { if (e.target === e.currentTarget || e.target.closest('[data-close]')) e.currentTarget.close(); });
+$('#g-preview').addEventListener('change', e => setPreview(e.target.checked));
+$('#g-reset').addEventListener('click', () => { $('#g-reset-yes').hidden = false; $('#g-reset-msg').textContent = preview ? 'Сотрётся прогресс режима просмотра.' : 'Сотрётся настоящий прогресс: буквы, записки, желание.'; });
+$('#g-reset-yes').addEventListener('click', () => { state = { done: {}, data: {} }; save(); $('#g-reset-yes').hidden = true; $('#g-reset-msg').textContent = 'Готово, всё с чистого листа.'; renderAll(); });
+function setPreview(on) {
+  preview = on;
+  try { history.replaceState(null, '', on ? '#preview' : location.pathname + location.search); } catch (e) {}
+  state = load(); renderAll();
+}
+addEventListener('hashchange', () => { if ((location.hash === '#preview') !== preview) setPreview(location.hash === '#preview'); });
+
+function renderAll() { renderStatus(); renderBoard(); renderGrid(); }
+renderAll();
+// в полночь новое окошко
+setInterval(() => { const t = todayNum(); if (t !== renderAll._t) { renderAll._t = t; renderAll(); } }, 60000);
+renderAll._t = todayNum();
+</script>
