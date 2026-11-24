@@ -1128,9 +1128,10 @@ function fireworks() {
   let k = 0; const iv = setInterval(() => { explode(innerWidth * (.15 + Math.random() * .7), innerHeight * (.15 + Math.random() * .4), 90); fxRun(); if (++k > 9) clearInterval(iv); }, 380);
 }
 
-/* ——— режим дарителя: 5 быстрых нажатий на заголовок или #preview ——— */
+/* ——— режим дарителя: только по ссылке с #preview; панель — 5 нажатий на заголовок в этом режиме ——— */
 let taps = [];
 $('#title').addEventListener('click', () => {
+  if (!preview) return;
   const t = Date.now(); taps = taps.filter(x => t - x < 2000); taps.push(t);
   if (taps.length >= 5) { taps = []; $('#g-preview').checked = preview; $('#g-reset-yes').hidden = true; $('#g-reset-msg').textContent = ''; $('#giver').showModal(); }
 });
