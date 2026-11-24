@@ -509,9 +509,10 @@ const DAYS = [
     done: 'Испекли', note: 'Дом пахнет имбирём и корицей. Значит, Новый год близко.',
     hunt: 'Возьми поводок Ричи. Он знает.' },
   { d: 14, type: 'quiz', title: 'Вопрос для знатока Хайрула',
-    q: 'Как зовут главного героя серии The Legend of Zelda?', options: ['Зельда', 'Линк', 'Ганон', 'Эпона'], correct: 1,
-    fact: 'Многие путают и называют героя Зельдой. Но Зельда — принцесса, а с мечом бегает Линк. Хотя ты-то знаешь.',
-    note: 'Ошибиться было невозможно.',
+    q: 'Как зовут главного антагониста серии The Legend of Zelda?', options: ['Гандон', 'Ганон', 'Боузер', 'Линк'], correct: 1,
+    wrong: { 0: 'Почти. Но за такое он тебя в Хайруле не пощадит.', 2: 'Это из другой игры от Nintendo, с грибами и принцессой Пич.', 3: 'Линк — это герой, а не злодей!' },
+    fact: 'Ганон, в человеческом облике Ганондорф. Злодей почти каждой части серии, и почти каждый раз Линк его побеждает.',
+    note: 'Ганон бы тобой гордился. Хотя нет, не стал бы.',
     hunt: 'Между книг.' },
   { d: 15, type: 'snow', title: 'Метель', target: 22, seconds: 20,
     intro: 'Метель усиливается: 22 снежинки за 20 секунд.', note: 'Половина декабря позади!',
@@ -841,18 +842,19 @@ const RENDER = {
     act.append(h('div', { class: 'quote' }, day.q));
     const opts = h('div', { class: 'opts' });
     const fact = h('p', { class: 'hint', hidden: true }, day.fact);
+    const oops = h('p', { class: 'hint', hidden: true });
     day.options.forEach((o, i) => {
       const b = h('button', { class: 'opt', type: 'button' }, o);
       if (state.done[day.d] && i === day.correct) b.classList.add('right');
       b.addEventListener('click', () => {
         if (b.classList.contains('wrong') || opts.dataset.solved) return;
-        if (i === day.correct) { b.classList.add('right'); opts.dataset.solved = 1; fact.hidden = false; done(); }
-        else { b.classList.add('wrong'); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); }
+        if (i === day.correct) { b.classList.add('right'); opts.dataset.solved = 1; oops.hidden = true; fact.hidden = false; done(); }
+        else { b.classList.add('wrong'); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); if (day.wrong && day.wrong[i]) { oops.textContent = day.wrong[i]; oops.hidden = false; } }
       });
       opts.append(b);
     });
     if (state.done[day.d]) { opts.dataset.solved = 1; fact.hidden = false; }
-    act.append(opts, fact);
+    act.append(opts, oops, fact);
   },
 
   task(day, act, done) {
